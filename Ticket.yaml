@@ -1,0 +1,94 @@
+To create a Gatekeeper policy that enforces these conditions, you need to define a ConstraintTemplate and a Constraint. Here's how you can structure these:
+
+### ConstraintTemplate
+
+The ConstraintTemplate defines the logic for checking the Horizontal Pod Autoscaler (HPA) and validating the conditions. This template will be used to create the Constraint.
+
+```yaml
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequirehpa
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequireHPA
+      validation:
+        openAPIV3Schema:
+          properties:
+            message:
+              type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequirehpa
+
+        violation[{"msg": message}] {
+          input.review.kind.kind == "Deployment" 
+          not hpa_exists
+          message := "There is no HPA present for higher environment usage, please consider adding one"
+        }
+
+        violation[{"msg": message}] {
+          input.review.kind.kind == "StatefulSet"
+          not hpa_exists
+          message := "There is no HPA present for higher environment usage, please consider adding one"
+        }
+
+        violation[{"msg": message}] {
+          hpa_exists
+          min_replicas == 1
+          message := "Given the application is set to scale, for higher environments you must set HPA minimum replica to greater than 1"
+        }
+
+        hpa_exists {
+          hpas := {hpa | hpa := input.review.objects.hpa}
+          count(hpas) > 0
+        }
+
+        min_replicas := hpa.spec.minReplicas {
+          hpa := input.review.objects.hpa[_]
+        }
+```
+
+### Constraint
+
+The Constraint uses the ConstraintTemplate to apply the policy to your cluster. You can specify the kinds of resources (e.g., Deployments, StatefulSets) to which this policy applies.
+
+```yaml
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequireHPA
+metadata:
+  name: require-hpa-for-deployments-and-statefulsets
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Deployment", "StatefulSet"]
+  parameters:
+    message: "Given the application is set to scale, for higher environments you must set HPA minimum replica to greater than 1"
+```
+
+### Explanation
+
+1. **ConstraintTemplate**:
+   - This template defines the policy logic using Rego, a policy language used by Gatekeeper.
+   - The `hpa_exists` rule checks if an HPA exists for the Deployment or StatefulSet.
+   - The `min_replicas` rule retrieves the `minReplicas` value from the HPA.
+   - Violations are defined for cases where no HPA is present and where the `minReplicas` is set to 1.
+
+2. **Constraint**:
+   - The constraint applies the template to resources of kind `Deployment` and `StatefulSet`.
+   - The `message` parameter provides a custom message for the violation.
+
+### Deployment
+
+Deploy the ConstraintTemplate and the Constraint to your Kubernetes cluster using `kubectl`:
+
+```sh
+kubectl apply -f constrainttemplate.yaml
+kubectl apply -f constraint.yaml
+```
+
+This policy will ensure that Deployments and StatefulSets in your cluster are checked for the presence of an HPA, and that the HPA's `minReplicas` is greater than 1, providing appropriate messages for violations.
