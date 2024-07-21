@@ -15,6 +15,10 @@ fi
 echo $?
 
 # Install Metrics Server (To Do...)
+# Check the version of Metrics Server (don't use the latest), and use hacks
+# in order to make it properly work!
+
+# Then continue with deploy/sts and apply an HPA
 
 printf "Applying OPA Gatekeeper resources..."
 printf "\n"
