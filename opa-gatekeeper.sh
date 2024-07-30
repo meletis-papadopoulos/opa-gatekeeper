@@ -47,17 +47,9 @@ echo $?
 
 printf "\n"
 
-# Apply the following fixes:
+# Apply the following fixes to the metrics server deployment manifest:
 # Use:  a. "--kubelet-insecure-tls=true"
 #       b. "hostNetwork: true"
-METRICS_RESOLUTION_TIME="- --metric-resolution=15s"
-KUBELET_INSECURE_TLS="- --kubelet-insecure-tls=true"
-METRICS_SERVER_NAME="name: metrics-server"
-HOST_NETWORK="hostNetwork: true"
-FILE="components.yaml"
-
-sed ${FILE} -e "/${METRICS_RESOLUTION_TIME}/a ${KUBELET_INSECURE_TLS}"
-sed ${FILE} -e "/${METRICS_SERVER_NAME}/a ${HOST_NETWORK}"
 
 # Check status
 echo $?
@@ -213,7 +205,6 @@ echo $?
 printf "\n"
 
 # Create the HorizontalPodAutoscaler
-# kubectl create -f https://k8s.io/examples/application/hpa/php-apache.yaml
 cat <<EOF | kubectl -f -
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
