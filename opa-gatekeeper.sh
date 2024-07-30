@@ -69,54 +69,6 @@ printf "Applying Constraint Template..."
 printf "\n"
 
 # Apply OPA Constrant Template
-cat <<EOF | kubectl create -f -
-apiVersion: templates.gatekeeper.sh/v1beta1
-kind: ConstraintTemplate
-metadata:
-  name: k8srequirehpa
-spec:
-  crd:
-    spec:
-      names:
-        kind: K8sRequireHPA
-      validation:
-        openAPIV3Schema:
-          properties:
-            message:
-              type: string
-  targets:
-    - target: admission.k8s.gatekeeper.sh
-      rego: |
-        package k8srequirehpa
-
-        violation[{"msg": message}] {
-          input.review.kind.kind == "Deployment" 
-          not hpa_exists
-          message := "There is no HPA present for higher environment usage, please consider adding one"
-        }
-
-        violation[{"msg": message}] {
-          input.review.kind.kind == "StatefulSet"
-          not hpa_exists
-          message := "There is no HPA present for higher environment usage, please consider adding one"
-        }
-
-        violation[{"msg": message}] {
-          hpa_exists
-          min_replicas == 1
-          message := "Given the application is set to scale, for higher environments you must set HPA minimum replica to greater than 1"
-        }
-
-        hpa_exists {
-          hpas := {hpa | hpa := input.review.objects.hpa}
-          count(hpas) > 0
-        }
-
-        min_replicas := hpa.spec.minReplicas {
-          hpa := input.review.objects.hpa[_]
-        }
-EOF
-
 printf "\n"
 
 # Check Status
@@ -127,19 +79,6 @@ printf "Applying Constraint..."
 printf "\n"
 
 # Apply OPA Constraint
-cat <<EOF | kubectl create -f -
-apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: K8sRequireHPA
-metadata:
-  name: require-hpa-for-deployments-and-statefulsets
-spec:
-  match:
-    kinds:
-      - apiGroups: ["apps"]
-        kinds: ["Deployment", "StatefulSet"]
-  parameters:
-    message: "Given the application is set to scale, for higher environments you must set HPA minimum replica to greater than 1"
-EOF
 
 # Check Status
 echo $?
