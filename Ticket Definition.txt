@@ -1,7 +1,0 @@
-Create a GateKeeper policy that checks for the following:
-1. Does a Deployment or StatefulSet have a HPA?
-   a. If yes, validate the minimum HPA replica is greater than 1
-   b. If the HPA replica is set to 1, block the Deployment or StatefulSet with the following message:
-        "Given the application is set to scale, for higher environments you must set HPA minimum replica to be greater than 1."
-   c. If no HPA is present, output a warning stating the following: 
-        "There is not HPA present for higher environment usage, please consider adding one"

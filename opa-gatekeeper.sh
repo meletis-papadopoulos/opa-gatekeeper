@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Set namespace
-kubectl config set-context --current --namespace default
+# OPA Gatekeeper Policy
 
-# OPA Gatekeeper script
+# Switch to default namespace
+kubectl config set-context --current --namespace default
 
 # Check to see if you're root user
 if [[ "${UID}" -ne 0 ]]; then
@@ -14,20 +14,64 @@ fi
 # Check status
 echo $?
 
-# Install Metrics Server (To Do...)
-# Check the version of Metrics Server (don't use the latest), and use hacks
-# in order to make it properly work!
-
-# Then continue with deploy/sts and apply an HPA
-
-printf "Applying OPA Gatekeeper resources..."
 printf "\n"
+
+# Override default vim settings
+VIM_PATH="/etc/vim/vimrc"
+
+echo "set ai" >> ${VIM_PATH}
+echo "set nu" >> ${VIM_PATH}
+echo "set et" >> ${VIM_PATH}
+echo "set sw=2" >> ${VIM_PATH}
+echo "set ts=2" >> ${VIM_PATH}
+
+cat ${VIM_PATH}
+
+# Check status
+echo $?
+
+printf "\n"
+
+# Install Metrics Server (v0.6.3)
+HOME="/root/"
+METRICS_SERVER="${HOME}/metrics-server"
+mkdir ${METRICS_SERVER}
+cd ${METRICS_SERVER}
+
+# Get the metrics server manifest file
+URL="https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.6.3/components.yaml"
+wget ${URL} metrics-server.yaml
+
+# Check status
+echo $?
+
+printf "\n"
+
+# Apply the following fixes:
+# Use:  a. "--kubelet-insecure-tls=true"
+#       b. "hostNetwork: true"
+METRICS_RESOLUTION_TIME="- --metric-resolution=15s"
+KUBELET_INSECURE_TLS="- --kubelet-insecure-tls=true"
+METRICS_SERVER_NAME="name: metrics-server"
+HOST_NETWORK="hostNetwork: true"
+FILE="components.yaml"
+
+sed ${FILE} -e "/${METRICS_RESOLUTION_TIME}/a ${KUBELET_INSECURE_TLS}"
+sed ${FILE} -e "/${METRICS_SERVER_NAME}/a ${HOST_NETWORK}"
+
+# Check status
+echo $?
+
+printf "\n"
+printf "Applying OPA Gatekeeper resources..."
 
 # Make sure Gatekeeper resources are installed (use pre-built image)
 kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.16.3/deploy/gatekeeper.yaml
 
 # Check status
 echo $?
+
+printf "\n"
 
 printf "Applying Constraint Template..."
 printf "\n"
@@ -44,7 +88,6 @@ spec:
       names:
         kind: K8sRequireHPA
       validation:
-        # Schema for parameters field
         openAPIV3Schema:
           properties:
             message:
@@ -82,9 +125,12 @@ spec:
         }
 EOF
 
-# Check Status (Success/Fail?)
+printf "\n"
+
+# Check Status
 echo $?
 
+printf "\n"
 printf "Applying Constraint..."
 printf "\n"
 
@@ -103,13 +149,14 @@ spec:
     message: "Given the application is set to scale, for higher environments you must set HPA minimum replica to greater than 1"
 EOF
 
-# Check Status (Success/Fail?)
+# Check Status
 echo $?
 
+printf "\n"
 printf "Applying test resources..."
 printf "\n"
 
-# Apply Resources
+# Apply Deployment
 cat <<EOF | kubectl create -f -
 apiVersion: apps/v1
 kind: Deployment
@@ -136,10 +183,11 @@ spec:
             cpu: 200m
 EOF
 
-# Check Status (Success/Fail?)
+printf "\n"
+
+# Check Status
 echo $?
 
-printf "\n"
 printf "\n"
 
 # Apply Service
@@ -157,13 +205,61 @@ spec:
     run: php-apache
 EOF
 
-# Check Status (Success/Fail?)
+printf "\n"
+
+# Check Status
 echo $?
+
+printf "\n"
+
+# Create the HorizontalPodAutoscaler
+# kubectl create -f https://k8s.io/examples/application/hpa/php-apache.yaml
+cat <<EOF | kubectl -f -
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: php-apache
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: php-apache
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+EOF
+
+# Check status
+echo $?
+
+printf "\n"
+
+# CLEAN UP
 
 printf "Cleaning up...\n"
 printf "\n"
 
-# CLEAN UP
+# Remove Metrics Server
+cd ${METRICS_SERVER}
+kubectl delete -f components.yaml --force --grace-period 0
+
+printf "\n"
+
+# Remove HPA
+kubectl delete hpa php-apache --force --grace-period 0
+
+printf "\n"
+
+# Uninstall Gatekeeper
+kubectl delete -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.16.3/deploy/gatekeeper.yaml
+
+printf "\n"
 
 # Remove php-apache deployment
 kubectl -n default delete deployment php-apache --force --grace-period 0
@@ -171,14 +267,12 @@ printf "\n"
 
 # Delete php-apache service
 kubectl -n default delete svc php-apache --force --grace-period 0
+
 printf "\n"
 
-# Uninstall Gatekeeper
-kubectl delete -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.16.3/deploy/gatekeeper.yaml
-printf "\n"
-
-# Check status (Was everything removed successfully?)
+# Check status
 echo $?
 
-exit 0
+printf "\n"
 
+exit 0
