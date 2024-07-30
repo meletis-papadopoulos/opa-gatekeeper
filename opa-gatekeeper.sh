@@ -2,9 +2,6 @@
 
 # OPA Gatekeeper Policy
 
-# Switch to default namespace
-kubectl config set-context --current --namespace default
-
 # Check to see if you're root user
 if [[ "${UID}" -ne 0 ]]; then
   echo "You must the script as root." >&2
@@ -50,6 +47,9 @@ printf "\n"
 # Apply the following fixes to the metrics server deployment manifest:
 # Use:  a. "--kubelet-insecure-tls=true"
 #       b. "hostNetwork: true"
+
+# Finally, apply the modified manifest
+kubectl create -f components.yaml
 
 # Check status
 echo $?
