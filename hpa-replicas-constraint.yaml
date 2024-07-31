@@ -1,7 +1,7 @@
 apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: K8sRequiredLabels
+kind: HPAReplicaConstraint
 metadata:
-  name: hpa-replicas
+  name: deployment-statefulset-hpa-replica-constraint
 spec:
   match:
     kinds:
@@ -9,7 +9,3 @@ spec:
         kinds: ["Deployment"]
       - apiGroups: ["apps"]
         kinds: ["StatefulSet"]
-  parameters:
-    severity: "medium"
-    message: "HPA replica validation failed"
-    namespaceSelector: {}

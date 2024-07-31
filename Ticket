@@ -1,7 +1,7 @@
-Create a GateKeeper policy (Constraint Template and Constraint) that checks for the following:
-1. Does a Deployment or StatefulSet have a HPA?
-   a. If yes, validate the minimum HPA replica is greater than 1
-   b. If the HPA replica is set to 1, block the Deployment or StatefulSet with the following message:
+Create a GateKeeper policy (create both a constraint template and a constraint) that checks for the following:
+1. Does the Deployment or StatefulSet have a HPA?
+   a. If yes, validate that the minimum HPA replica is greater than 1
+   b. If the HPA replica is equal to 1, block the Deployment or StatefulSet with the following message:
         "Given the application is set to scale, for higher environments you must set HPA minimum replica to be greater than 1."
-   c. If no HPA is present, output a warning stating the following: 
-        "There is not HPA present for higher environment usage, please consider adding one"
+   c. If no HPA is present, issue a warning stating the following message: 
+        "There is no HPA present. For higher environment usage, please consider adding one."

@@ -1,22 +1,33 @@
 apiVersion: templates.gatekeeper.sh/v1beta1
 kind: ConstraintTemplate
 metadata:
-  name: hpa-replicas
-  annotations:
-    description: |
-      This constraint ensures that Deployments or StatefulSets with HPAs have a minimum HPA replica greater than 1.
+  name: hpa-replica-constraint
 spec:
+  crd:
+    spec:
+      names:
+        kind: HPAReplicaConstraint
   targets:
     - target: admission.k8s.gatekeeper.sh
       rego: |
-        package hpa_replicas
+        package hpa
 
         violation[{"msg": msg}] {
-          input.repl.spec.hpa.replicas = 1
-          msg = sprintf("Given the application is set to scale, for higher environments you must set HPA minimum replica to be greater than 1.")
-        }
+          input.review.object.kind == "Deployment"  # Check for Deployment
+          deployment := input.review.object
 
-        violation[{"msg": msg}] {
-          not input.repl.spec.hpa
-          msg = sprintf("There is no HPA present for higher environment usage, please consider adding one.")
+          input.review.object.kind == "StatefulSet"  # Check for StatefulSet
+          statefulSet := input.review.object
+
+          # Check if HPA is present
+          (hpa := deployment.metadata.annotations["autoscaling.alpha.kubernetes.io/current-metrics"]) {
+            # Validate minimum HPA replica
+            minReplicas := tonumber(deployment.metadata.annotations["autoscaling.alpha.kubernetes.io/minReplicas"])
+
+            (minReplicas == 1) {
+              msg := "Given the application is set to scale, for higher environments you must set HPA minimum replica to be greater than 1."
+            }
+          } else {
+            msg := "There is no HPA present. For higher environment usage, please consider adding one."
+          }
         }
