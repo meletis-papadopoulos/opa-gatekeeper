@@ -130,6 +130,7 @@ spec:
       labels:
         k8s-app: metrics-server
     spec:
+      hostNetwork: true
       containers:
       - args:
         - --cert-dir=/tmp
@@ -140,7 +141,6 @@ spec:
         - --kubelet-insecure-tls=true
         image: registry.k8s.io/metrics-server/metrics-server:v0.6.3
         imagePullPolicy: IfNotPresent
-        hostNetwork: true
         livenessProbe:
           failureThreshold: 3
           httpGet:
