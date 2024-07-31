@@ -55,11 +55,6 @@ printf "\n"
 printf "CLEANING UP...\n"
 printf "\n"
 
-# Force Delete all test resources
-# for i in $(echo pwd) do
-#   kubectl -f ${i}.yaml --force --grace-period 0
-# done
-
 # Remove Deployment/Service/HPA
 kubectl delete -f php-apache.yaml --force --grace-period 0
 
