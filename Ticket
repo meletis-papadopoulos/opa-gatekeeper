@@ -1,4 +1,4 @@
-Create a GateKeeper policy that checks for the following:
+Create a GateKeeper policy (Constraint Template and Constraint) that checks for the following:
 1. Does a Deployment or StatefulSet have a HPA?
    a. If yes, validate the minimum HPA replica is greater than 1
    b. If the HPA replica is set to 1, block the Deployment or StatefulSet with the following message:

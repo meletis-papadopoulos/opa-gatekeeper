@@ -1,0 +1,22 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: hpa-replicas
+  annotations:
+    description: |
+      This constraint ensures that Deployments or StatefulSets with HPAs have a minimum HPA replica greater than 1.
+spec:
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package hpa_replicas
+
+        violation[{"msg": msg}] {
+          input.repl.spec.hpa.replicas = 1
+          msg = sprintf("Given the application is set to scale, for higher environments you must set HPA minimum replica to be greater than 1.")
+        }
+
+        violation[{"msg": msg}] {
+          not input.repl.spec.hpa
+          msg = sprintf("There is no HPA present for higher environment usage, please consider adding one.")
+        }
