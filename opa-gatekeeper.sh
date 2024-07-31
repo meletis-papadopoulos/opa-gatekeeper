@@ -84,7 +84,7 @@ echo $?
 printf "\n"
 
 # Uninstall Gatekeeper Resources
-kubectl delete -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.16.3/deploy/gatekeeper.yaml
+kubectl delete -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.16.3/deploy/gatekeeper.yaml --force -grace-period 0
 
 printf "\n"
 
