@@ -2,7 +2,7 @@
 > Block all Deployments/StatefulSets if HPA doesn't exist!
 
 ## How to run
-> Make sure you have **root** privileges on the cluster
+> You need to have **root** privileges on the cluster
 
 - Install Metrics Server (i.e. v0.6.3)
 - Install Gatekeeper resources (use a pre-built image)
