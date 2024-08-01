@@ -9,6 +9,7 @@
 - Apply OPA Constrant Template
 - Apply OPA Constraint
 - Create test resources (i.e. Deployment/Service/HPA)
+- Increase the load
 - Clean Up!
 
 > To remove all applied resources, use **clean-up.sh** script
@@ -51,3 +52,15 @@ echo "set nu" >> ${VIM_PATH}
 echo "set et" >> ${VIM_PATH}
 echo "set sw=2" >> ${VIM_PATH}
 echo "set ts=2" >> ${VIM_PATH}
+```
+
+> To increase workload, use **increase-load.sh** script
+```bash
+#!/bin/bsah
+
+# Run this in a separate terminal
+# so that the load generation continues and you can carry on with the rest of the steps
+kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+```
+
+> ###### Walkthrough: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
