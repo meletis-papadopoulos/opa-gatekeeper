@@ -38,7 +38,7 @@ echo $?
 
 ```
 
-> To override default Vim settings use the script (**custom-vim-settings.sh****)
+> To override default Vim settings use the script (**custom-vim-settings.sh**)
 
 ```bash
 #!/bin/bash
