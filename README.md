@@ -56,7 +56,7 @@ echo "set ts=2" >> ${VIM_PATH}
 
 > To increase workload, use **increase-load.sh** script
 ```bash
-#!/bin/bsah
+#!/bin/bash
 
 # Run this in a separate terminal
 # so that the load generation continues and you can carry on with the rest of the steps
