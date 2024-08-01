@@ -55,6 +55,7 @@ echo "set ts=2" >> ${VIM_PATH}
 ```
 
 > To increase workload, use **increase-load.sh** script
+
 ```bash
 #!/bin/bash
 
@@ -63,4 +64,4 @@ echo "set ts=2" >> ${VIM_PATH}
 kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
 ```
 
-> ###### Walkthrough: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
+###### Walkthrough: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
