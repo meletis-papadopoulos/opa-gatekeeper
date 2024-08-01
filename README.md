@@ -11,7 +11,7 @@
 - Create test resources (i.e. Deployment/Service/HPA)
 - Clean Up!
 
-> To remove all applied resources, use the script (**clean-up.sh**)
+> To remove all applied resources, use **clean-up.sh** script
 
 ```bash
 # Remove Deployment/Service/HPA
@@ -38,7 +38,7 @@ echo $?
 
 ```
 
-> To override default Vim settings use the script (**custom-vim-settings.sh**)
+> To override default Vim settings, use **custom-vim-settings.sh** script
 
 ```bash
 #!/bin/bash
