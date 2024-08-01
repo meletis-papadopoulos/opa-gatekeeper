@@ -11,7 +11,7 @@
 - Create test resources (i.e. Deployment/Service/HPA)
 - Clean Up!
 
-> To remove all applied resources, use the script (**cleanup.sh**)
+> To remove all applied resources, use the script (**clean-up.sh**)
 
 ```bash
 # Remove Deployment/Service/HPA
