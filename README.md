@@ -1,8 +1,8 @@
 # OPA-GateKeeper Policy
+> Block all Deployments/StatefulSets if HPA doesn't exist!
 
-#### Block all Deployments/StatefulSets if HPA doesn't exist!
-
-> Make sure you have root privileges on the cluster
+## How to run
+> Make sure you have **root** privileges on the cluster
 
 - Install Metrics Server (i.e. v0.6.3)
 - Install Gatekeeper resources (use a pre-built image)
@@ -12,9 +12,12 @@
 - Increase load (add more replicas with HPA)
 - Clean Up!
 
-> To remove all applied resources, use **clean-up.sh** script
+## Remove applied resources
+> Use **clean-up.sh** script
 
 ```bash
+#!/bin/bash
+
 # Remove Deployment/Service/HPA
 kubectl delete -f php-apache.yaml --force --grace-period 0
 
@@ -36,10 +39,10 @@ kubectl delete -f metrics-server.yaml --force --grace-period 0
 
 # Check status
 echo $?
-
 ```
 
-> To override default Vim settings, use **custom-vim-settings.sh** script
+## Override default Vim settings
+> Use **custom-vim-settings.sh** script
 
 ```bash
 #!/bin/bash
@@ -54,7 +57,8 @@ echo "set sw=2" >> ${VIM_PATH}
 echo "set ts=2" >> ${VIM_PATH}
 ```
 
-> To increase workload, use **increase-load.sh** script
+## Increase workload
+> Use **increase-load.sh** script
 
 ```bash
 #!/bin/bash
@@ -64,4 +68,5 @@ echo "set ts=2" >> ${VIM_PATH}
 kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
 ```
 
-###### Walkthrough: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
+## Links
+Official HPA walkthrough [k8s docs](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/)
