@@ -8,5 +8,3 @@ echo "set nu" >> ${VIM_PATH}
 echo "set et" >> ${VIM_PATH}
 echo "set sw=2" >> ${VIM_PATH}
 echo "set ts=2" >> ${VIM_PATH}
-
-cat ${VIM_PATH}
