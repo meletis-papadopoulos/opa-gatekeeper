@@ -9,7 +9,7 @@
 - Apply OPA Constrant Template
 - Apply OPA Constraint
 - Create test resources (i.e. Deployment/Service/HPA)
-- Increase the load
+- Increase load (add more replicas with HPA)
 - Clean Up!
 
 > To remove all applied resources, use **clean-up.sh** script
