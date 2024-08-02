@@ -1,11 +1,11 @@
-# OPA-GateKeeper Policy
+# OPA/GateKeeper Policy
 > Block all Deployments/StatefulSets if a HPA doesn't exist!
 
 ## Description
 > The project consists of 3 folders:
-- **manifest** -> YAML files for all resources
+- **manifest** -> YAML files for resources
 - **scripts** -> Scripts for clean up, load increase and Vim
-- **ticket** -> Short description for requirements
+- **ticket** -> OPA/Gatekeeper policy requirements
 
 ## How to run
 > You need to have **root** privileges on the cluster
@@ -24,6 +24,8 @@
 ```bash
 #!/bin/bash
 
+cd /manifest
+
 # Remove Deployment/Service/HPA
 kubectl delete -f deployment-with-hpa.yaml --force --grace-period 0
 
@@ -35,8 +37,8 @@ kubectl delete -f gatekeeper.yaml --force -grace-period 0
 printf "\n"
 
 # Delete Constraint & Constraint Template
-kubectl delete -f hpa-replicas-constraint.yaml --force --grace-period 0
-kubectl delete -f hpa-replicas-template.yaml --force --grace-period 0
+kubectl delete -f constraint.yaml --force --grace-period 0
+kubectl delete -f constraint-template.yaml --force --grace-period 0
 
 printf "\n"
 
