@@ -1,5 +1,5 @@
 # OPA-GateKeeper Policy
-> Block all Deployments/StatefulSets if HPA doesn't exist!
+> Block all Deployments/StatefulSets if a HPA doesn't exist!
 
 ## How to run
 > You need to have **root** privileges on the cluster
@@ -19,7 +19,7 @@
 #!/bin/bash
 
 # Remove Deployment/Service/HPA
-kubectl delete -f php-apache.yaml --force --grace-period 0
+kubectl delete -f deployment-with-hpa.yaml --force --grace-period 0
 
 printf "\n"
 
