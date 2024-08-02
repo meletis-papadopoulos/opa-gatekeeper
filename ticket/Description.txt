@@ -1,5 +1,3 @@
-### Ticket Description ###
-
 Create an OPA GateKeeper policy (constraint template and constraint) that checks for the following:
      a. Does a Deployment or StatefulSet have a HPA? If yes, validate that the minimum HPA replica is greater than 1.
      b. If the HPA replica is equal to 1, block the Deployment or StatefulSet with the following message: "Given the application is set to scale, for higher environments you must set HPA minimum replica to be greater than 1."
