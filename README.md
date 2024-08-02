@@ -30,7 +30,7 @@ printf "\n"
 
 # Delete Constraint & Constraint Template
 kubectl delete -f hpa-replicas-constraint.yaml --force --grace-period 0
-kubectl delete -f hpa-replicas.yaml --force --grace-period 0
+kubectl delete -f hpa-replicas-template.yaml --force --grace-period 0
 
 printf "\n"
 
