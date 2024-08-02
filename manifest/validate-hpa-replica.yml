@@ -1,0 +1,54 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sMutation
+metadata:
+  name: validate-hpa-replica
+spec:
+  match:
+    kinds:
+      - apiGroups: ["apps", "extensions"]
+        kinds: ["Deployment", "StatefulSet"]
+  parameters:
+    message: "Given the application is set to scale, for higher environments you must set HPA minimum replica to be greater than 1."
+    enforcementAction: deny
+    skipDryRun: false
+  forProvider:
+    regoContent: |
+      package hpa_replica_greater_than_one
+
+      violation[{"msg": msg}] {
+        input.kind == "Deployment"
+        deployment_has_hpa := input.spec.hpa
+        count(deployment_has_hpa) > 0
+
+        min_replica := deployment_has_hpa[0].spec.minReplicas
+        min_replica <= 1
+
+        msg := sprintf("Given the application is set to scale, for higher environments you must set HPA minimum replica to be greater than 1.")
+      }
+
+      violation[{"msg": msg}] {
+        input.kind == "StatefulSet"
+        statefulset_has_hpa := input.spec.hpa
+        count(statefulset_has_hpa) > 0
+
+        min_replica := statefulset_has_hpa[0].spec.minReplicas
+        min_replica <= 1
+
+        msg := sprintf("Given the application is set to scale, for higher environments you must set HPA minimum replica to be greater than 1.")
+      }
+
+      violation[{"msg": msg}] {
+        input.kind == "Deployment"
+        deployment_has_hpa := input.spec.hpa
+        count(deployment_has_hpa) == 0
+
+        msg := sprintf("There is no HPA present. For higher environment usage, please consider adding one.")
+      }
+
+      violation[{"msg": msg}] {
+        input.kind == "StatefulSet"
+        statefulset_has_hpa := input.spec.hpa
+        count(statefulset_has_hpa) == 0
+
+        msg := sprintf("There is no HPA present. For higher environment usage, please consider adding one.")
+      }
