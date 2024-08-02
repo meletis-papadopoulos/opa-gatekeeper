@@ -24,7 +24,10 @@
 ```bash
 #!/bin/bash
 
-cd /manifest
+# Change to scripts path
+PATH="/root/OPA-GateKeeper/scripts"
+
+cd ${PATH}
 
 # Remove Deployment/Service/HPA
 kubectl delete -f deployment-with-hpa.yaml --force --grace-period 0

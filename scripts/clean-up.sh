@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Change to scripts path
+PATH="/root/OPA-GateKeeper/scripts"
+
+cd ${PATH}
+
 # Remove Deployment/Service/HPA
 kubectl delete -f php-apache.yaml --force --grace-period 0
 
