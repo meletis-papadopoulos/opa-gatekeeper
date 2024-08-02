@@ -1,6 +1,12 @@
 # OPA-GateKeeper Policy
 > Block all Deployments/StatefulSets if a HPA doesn't exist!
 
+## Description
+> The project consists of 3 folders:
+- **manifest** -> YAML files for all resources
+- **scripts** -> Scripts for clean up, load increase and Vim
+- **ticket** -> Short description for requirements
+
 ## How to run
 > You need to have **root** privileges on the cluster
 
@@ -8,7 +14,7 @@
 - Install Gatekeeper resources (use a pre-built image)
 - Apply OPA Constrant Template
 - Apply OPA Constraint
-- Create test resources (i.e. Deployment/Service/HPA)
+- Create test resources (i.e. Deployment/StatefulSet)
 - Increase load (add more replicas with HPA)
 - Clean Up!
 
