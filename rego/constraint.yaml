@@ -57,4 +57,4 @@ spec:
   targets:
     - target: admission.k8s.gatekeeper.sh
       rego: |
-{{ file.Read "opa/OPA-GateKeeper/rego/src.rego" | strings.Indent 8 | strings.TrimSuffix "\n" }}
+{{ file.Read "rego/src.rego" | strings.Indent 8 | strings.TrimSuffix "\n" }}
