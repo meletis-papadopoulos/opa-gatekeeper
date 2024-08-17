@@ -59,5 +59,5 @@ echo $?
 ```
 
 ## Links
-HPA walkthrough [k8s docs](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/)
-OPA policies library [horizontalpodautoscaler](https://github.com/open-policy-agent/gatekeeper-library/tree/master/library/general/horizontalpodautoscaler)
+HPA walkthrough **[k8s docs](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/)**
+OPA policies library **[horizontalpodautoscaler](https://github.com/open-policy-agent/gatekeeper-library/tree/master/library/general/horizontalpodautoscaler)**
