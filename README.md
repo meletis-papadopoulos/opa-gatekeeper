@@ -4,7 +4,7 @@
 ## Description
 > The project consists of 5 folders:
 - **gatekeeper** -> YAML definition for OPA/Gatekeeper
-- **hpa** -> Template, Constraint and test cases
+- **hpa** -> Template, Constraint and test resources
 - **metrics-server** -> YAML definition for Metrics Server
 - **script** -> Clean up applied resources
 - **ticket** -> OPA/Gatekeeper policy requirements
@@ -24,35 +24,40 @@
 
 ```bash
 #!/bin/bash
+  
+# Change to project directory
+PATH="/root/OPA-GateKeeper"
 
-# Root path
-readonly PATH="/root/OPA-GateKeeper/"
+# Path to kubectl command
+k="/usr/bin/kubectl"
 
 # Uninstall Gatekeeper Resources
 cd ${PATH}/gatekeeper
 
-kubectl delete -f gatekeeper.yaml --force -grace-period 0
+$k delete -f gatekeeper.yaml --force --grace-period 0
 
 printf "\n"
 
 # Delete Constraint
 cd ${PATH}/hpa/samples/horizontalpodautoscaler/
 
-kubectl delete -f constraint.yaml --force --grace-period 0
+$k delete -f constraint.yaml --force --grace-period 0
 
 printf "\n"
 
 # Delete Constraint Template
 cd ${PATH}/hpa/
 
-kubectl delete -f template.yaml --force --grace-period 0
+$k delete -f template.yaml --force --grace-period 0
 
 printf "\n"
 
 # Remove Metrics Server
-cd ${PATH}/metrics-server
+cd ${PATH}/metrics-server/
 
-kubectl delete -f metrics-server.yaml --force --grace-period 0
+$k delete -f metrics-server.yaml --force --grace-period 0
+
+printf "\n"
 
 # Check status
 echo $?
