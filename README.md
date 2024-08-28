@@ -1,4 +1,4 @@
-# OPA/GateKeeper Policy
+# OPA/Gatekeeper Policy
 > Block all Deployments/StatefulSets if a HPA doesn't exist!
 
 ## Description
